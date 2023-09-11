@@ -91,6 +91,10 @@ def download_yt_video(message):
                     #TODO CONVERT FROM DEEPL
                     translate_now(sub)
                 print('de mi brilla', sub)
+                #SEND .srt file
+                bot.reply_to(message, 'Tu video aun se esta procesando, pero tus subtítulos ya están listos, puedes descargarlos a continuación')
+                shutil.copy(sub, '/var/www/html/videos/'+sub)
+                bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(sub))
                 burn_subtitules(title_video+'.mp4', sub, title_video)
 
                 # TODO, mover video a esa carpeta
