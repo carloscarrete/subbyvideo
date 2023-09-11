@@ -3,7 +3,8 @@ import os
 from dotenv import load_dotenv
 import urllib.parse
 
-import paramiko
+import shutil
+
 from download_video import download_video, download_audio
 from subtitle_video import burn_subtitules, convert_video_to_audio
 from translate import translate_now
@@ -25,11 +26,6 @@ tg_type_sub = ''
 def handle_video(message):
     global tg_type_sub
 
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(SERVER_CONNECT, username="ubuntu", key_filename="/home/carlos/llavesita.key")
-    sftp = ssh.open_sftp()
-
     if tg_video:
         file_info = bot.get_file(message.video.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
@@ -49,8 +45,8 @@ def handle_video(message):
             translate_now(file_info.file_id +'.srt')
         burn_subtitules(file_info.file_id +'.mp4', file_info.file_id +'.srt', file_info.file_id)
 
-        sftp.put(file_info.file_id+'_sub.mp4', "/var/www/html/videos/"+file_info.file_id+'.mp4')
-        ssh.close()
+        #MOVER VIDEO SUB A LA SIGUIENTE DIRECCION
+        shutil.move(file_info.file_id+'_sub.mp4', "/var/www/html/videos/"+file_info.file_id+'.mp4');
 
         #bot.send_video(message.chat.id, video, timeout=60)
         bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4' )
@@ -78,10 +74,6 @@ def download_yt_video(message):
 
     if tg_video_option=='sub' or tg_video_option=='original':
         try:
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(SERVER_CONNECT, username="ubuntu", key_filename="/home/carlos/llavesita.key")
-            sftp = ssh.open_sftp()
 
             url = tg_video_yt
             title_video = download_video(url, '.')
@@ -100,12 +92,14 @@ def download_yt_video(message):
                     translate_now(sub)
                 print('de mi brilla', sub)
                 burn_subtitules(title_video+'.mp4', sub, title_video)
-                sftp.put(title_video+'_sub.mp4', "/var/www/html/videos/"+title_video+'.mp4')
+
+                # TODO, mover video a esa carpeta
+                shutil.move(title_video+'_sub.mp4', "/var/www/html/videos/"+title_video+'.mp4')
 
             elif tg_video_option == 'original':
                 print('n')
-                sftp.put(title_video+'.mp4', "/var/www/html/videos/"+title_video+'.mp4')
-            ssh.close() 
+                # TODO, mover video a esa carpeta
+                shutil.move(title_video+'.mp4', "/var/www/html/videos/"+title_video+'.mp4')
             bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(title_video) +'.mp4' )
             print( SERVER + '/videos/'+urllib.parse.quote(title_video) +'.mp4')
             tg_video = False
