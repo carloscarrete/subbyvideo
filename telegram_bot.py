@@ -93,8 +93,8 @@ def download_yt_video(message):
                 print('de mi brilla', sub)
                 #SEND .srt file
                 bot.reply_to(message, 'Tu video aun se esta procesando, pero tus subtítulos ya están listos, puedes descargarlos a continuación')
-                shutil.copy(sub, '/var/www/html/videos/'+title_video)
-                bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(title_video))
+                shutil.copy(sub, '/var/www/html/videos/'+title_video + '.srt')
+                bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(title_video) +'.srt')
                 burn_subtitules(title_video+'.mp4', sub, title_video)
 
                 # TODO, mover video a esa carpeta
