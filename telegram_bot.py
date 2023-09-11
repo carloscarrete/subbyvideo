@@ -48,6 +48,11 @@ def handle_video(message):
         #MOVER VIDEO SUB A LA SIGUIENTE DIRECCION
         shutil.move(file_info.file_id+'_sub.mp4', "/var/www/html/videos/"+file_info.file_id+'.mp4');
 
+        #REMOVER ARCHIVOS VIEJOS, SRT, MP3 y MP4
+        os.remove(file_info.file_id +'.mp3')
+        os.remove(file_info.file_id +'.srt')
+        os.remove(file_info.file_id +'.mp4')
+
         #bot.send_video(message.chat.id, video, timeout=60)
         bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4' )
         print( SERVER +  '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4')
