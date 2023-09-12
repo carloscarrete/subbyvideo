@@ -123,11 +123,11 @@ def download_yt_video(message):
             if tg_video_option=='sub':
                 print('Deleting video...')
                 os.remove(title_video + '.mp4')
+                os.remove(title_video + '.srt')
             if tg_video_option=='original':
                 print('Deleting others...')
-                os.remove(title_video + '.srt')
-                os.remove(title_video + '.mp3')
             tg_video = False
+            os.remove(title_video + '.mp3')
             tg_video_option = ''
 
         except Exception as e:
