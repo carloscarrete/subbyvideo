@@ -43,6 +43,12 @@ def handle_video(message):
         elif tg_type_sub == 'spanish_sub':
             translate_sub(file_info.file_id +'.mp3')
             translate_now(file_info.file_id +'.srt')
+
+        #SEND .srt file
+        bot.reply_to(message, 'Tu video aun se esta procesando, pero tus subtítulos ya están listos, puedes descargarlos a continuación')
+        shutil.copy(file_info.file_id +'.srt', '/var/www/html/videos/'+file_info.file_id +'.srt')
+        bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.srt')    
+
         burn_subtitules(file_info.file_id +'.mp4', file_info.file_id +'.srt', file_info.file_id)
 
         #MOVER VIDEO SUB A LA SIGUIENTE DIRECCION
