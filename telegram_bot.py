@@ -24,47 +24,59 @@ tg_type_sub = ''
 
 @bot.message_handler(content_types=['video'])
 def handle_video(message):
+    global tg_video 
+    global tg_video_option 
+    global tg_video_yt
     global tg_type_sub
-    global tg_video
 
-    if tg_video:
-        file_info = bot.get_file(message.video.file_id)
-        downloaded_file = bot.download_file(file_info.file_path)
-        print(file_info)
-        print(file_info.file_id +file_info.file_path.split(".")[1])
-        with open(file_info.file_id +'.mp4', 'wb') as f:
-            f.write(downloaded_file)
-        video = open(file_info.file_id +'.mp4', 'rb')
-        bot.reply_to(message, "Su video será enviado en breve.")
-        convert_video_to_audio(file_info.file_id +'.mp4', file_info.file_id +'.mp3')
-        if tg_type_sub == 'original_sub':
-            get_subtitles(file_info.file_id +'.mp3')
-        elif tg_type_sub == 'english_sub':
-            translate_sub(file_info.file_id +'.mp3')
-        elif tg_type_sub == 'spanish_sub':
-            translate_sub(file_info.file_id +'.mp3')
-            translate_now(file_info.file_id +'.srt')
+    try:
+        if tg_video:
+            file_info = bot.get_file(message.video.file_id)
+            downloaded_file = bot.download_file(file_info.file_path)
+            print(file_info)
+            print(file_info.file_id +file_info.file_path.split(".")[1])
+            with open(file_info.file_id +'.mp4', 'wb') as f:
+                f.write(downloaded_file)
+            video = open(file_info.file_id +'.mp4', 'rb')
+            bot.reply_to(message, "Su video será enviado en breve.")
+            convert_video_to_audio(file_info.file_id +'.mp4', file_info.file_id +'.mp3')
+            if tg_type_sub == 'original_sub':
+                get_subtitles(file_info.file_id +'.mp3')
+            elif tg_type_sub == 'english_sub':
+                translate_sub(file_info.file_id +'.mp3')
+            elif tg_type_sub == 'spanish_sub':
+                translate_sub(file_info.file_id +'.mp3')
+                translate_now(file_info.file_id +'.srt')
 
-        #SEND .srt file
-        bot.reply_to(message, 'Tu video aun se esta procesando, pero tus subtítulos ya están listos, puedes descargarlos a continuación')
-        shutil.copy(file_info.file_id +'.srt', '/var/www/html/videos/'+file_info.file_id +'.srt')
-        bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.srt')    
+            #SEND .srt file
+            bot.reply_to(message, 'Tu video aun se esta procesando, pero tus subtítulos ya están listos, puedes descargarlos a continuación')
+            shutil.copy(file_info.file_id +'.srt', '/var/www/html/videos/'+file_info.file_id +'.srt')
+            bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.srt')    
 
-        burn_subtitules(file_info.file_id +'.mp4', file_info.file_id +'.srt', file_info.file_id)
+            burn_subtitules(file_info.file_id +'.mp4', file_info.file_id +'.srt', file_info.file_id)
 
-        #MOVER VIDEO SUB A LA SIGUIENTE DIRECCION
-        shutil.move(file_info.file_id+'_sub.mp4', "/var/www/html/videos/"+file_info.file_id+'.mp4');
+            #MOVER VIDEO SUB A LA SIGUIENTE DIRECCION
+            shutil.move(file_info.file_id+'_sub.mp4', "/var/www/html/videos/"+file_info.file_id+'.mp4');
 
-        #bot.send_video(message.chat.id, video, timeout=60)
-        bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4' )
-        print( SERVER +  '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4')
+            #bot.send_video(message.chat.id, video, timeout=60)
+            bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4' )
+            print( SERVER +  '/videos/'+urllib.parse.quote(file_info.file_id) +'.mp4')
 
-                        #REMOVER ARCHIVOS VIEJOS, SRT, MP3 y MP4
-        os.remove(file_info.file_id + '.mp4')
-        os.remove(file_info.file_id + '.srt')
-        os.remove(file_info.file_id + '.mp3')
+                            #REMOVER ARCHIVOS VIEJOS, SRT, MP3 y MP4
+            os.remove(file_info.file_id + '.mp4')
+            os.remove(file_info.file_id + '.srt')
+            os.remove(file_info.file_id + '.mp3')
 
+            tg_video = False
+            tg_video_option = ''
+            tg_video_yt = ''
+            tg_type_sub = ''
+    except Exception as e:
+        bot.reply_to(message, f"Ocurrió un error: {str(e)}")
         tg_video = False
+        tg_video_option = ''
+        tg_video_yt = ''
+        tg_type_sub = ''
     
 
 def send_url_download(message): 
@@ -81,9 +93,10 @@ def send_url_download(message):
 
 
 def download_yt_video(message):
+    global tg_video 
+    global tg_video_option 
     global tg_video_yt
-    global tg_video_option
-    global tg_video
+    global tg_type_sub
 
     if tg_video_option=='sub' or tg_video_option=='original':
         try:
@@ -129,9 +142,15 @@ def download_yt_video(message):
                 print('Deleting others...')
             tg_video = False
             tg_video_option = ''
+            tg_video_yt = ''
+            tg_type_sub = ''
 
         except Exception as e:
             bot.reply_to(message, f"Ocurrió un error: {str(e)}") 
+            tg_video = False
+            tg_video_option = ''
+            tg_video_yt = ''
+            tg_type_sub = ''
 
 #Send video to server
 @bot.message_handler(content_types=['video'])
