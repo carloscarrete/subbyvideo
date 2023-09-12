@@ -120,8 +120,11 @@ def download_yt_video(message):
             bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(title_video) +'.mp4' )
             print( SERVER + '/videos/'+urllib.parse.quote(title_video) +'.mp4')
                 #REMOVER ARCHIVOS VIEJOS, SRT, MP3 y MP4
-            if tg_video_option=='original':
+            if tg_video_option=='sub':
+                print('Deleting video...')
                 os.remove(title_video + '.mp4')
+            if tg_video_option=='original':
+                print('Deleting others...')
                 os.remove(title_video + '.srt')
                 os.remove(title_video + '.mp3')
             tg_video = False
