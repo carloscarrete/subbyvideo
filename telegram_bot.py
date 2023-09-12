@@ -25,6 +25,7 @@ tg_type_sub = ''
 @bot.message_handler(content_types=['video'])
 def handle_video(message):
     global tg_type_sub
+    global tg_video
 
     if tg_video:
         file_info = bot.get_file(message.video.file_id)
