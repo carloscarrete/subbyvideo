@@ -197,21 +197,21 @@ def handle_callback_query(call):
         tg_type_sub="original_sub"
         bot.send_message(call.message.chat.id, 'Se descargará el video con subtítulos en su idioma original. Por favor espere, esto puede tardar unos minutos')
         if tg_video:
-            bot.send_message('Ahora bien, por favor envie un video para proceder con los subtítulos')
+            bot.send_message(call.message.chat.id, 'Ahora bien, por favor envie un video para proceder con los subtítulos')
         download_yt_video(call.message)
         print('ORIGINAL')
     elif call.data ==  'spanish_sub':
         tg_type_sub="spanish_sub"
         bot.send_message(call.message.chat.id, 'Se descargará el video con subtítulos en Español. Por favor espere, esto puede tardar unos minutos')
         if tg_video:
-            bot.send_message('Ahora bien, por favor envie un video para proceder con los subtítulos')
+            bot.send_message(call.message.chat.id, 'Ahora bien, por favor envie un video para proceder con los subtítulos')
         download_yt_video(call.message)
         print('SPANISH')
     elif call.data ==  'english_sub':
         tg_type_sub="english_sub"
         bot.send_message(call.message.chat.id, 'Se descargará el video con subtítulos en Inglés. Por favor espere, esto puede tardar unos minutos')
         if tg_video:
-            bot.send_message('Ahora bien, por favor envie un video para proceder con los subtítulos')
+            bot.send_message(call.message.chat.id, 'Ahora bien, por favor envie un video para proceder con los subtítulos')
         download_yt_video(call.message)
         print('ENGLISH')
     
