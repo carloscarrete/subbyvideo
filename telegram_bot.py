@@ -122,8 +122,8 @@ def download_yt_video(message):
                 #REMOVER ARCHIVOS VIEJOS, SRT, MP3 y MP4
             if tg_video_option=='sub':
                 os.remove(title_video + '.mp4')
-            os.remove(title_video + '.srt')
-            os.remove(title_video + '.mp3')
+                os.remove(title_video + '.srt')
+                os.remove(title_video + '.mp3')
             tg_video = False
             tg_video_option = ''
 
