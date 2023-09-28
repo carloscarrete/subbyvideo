@@ -1,58 +1,70 @@
-from pytube.cli import on_progress
-from pytube import YouTube
 import os
+import subprocess
+import yt_dlp as yt
 
 from ws_sub import get_subtitles, translate_sub
 
 def download_audio(url, output_path, type_sub=''):
-  try:
-    video = YouTube(url, on_progress_callback=on_progress)
-    audio = video.streams.filter(only_audio=True).first()
+    try:
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
 
-    out_file = audio.download(output_path=output_path, filename=video.title)
+        with yt.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=False)
+            video_title = info_dict.get('title', 'video')
+            ydl.download([url])
 
-    base, ext = os.path.splitext(out_file)
-    new_file = base + '.mp3'
-    print(out_file)
-    print('----')
-    print(new_file)
+        mp3_file = os.path.join(output_path, f"{video_title}.mp3")
 
-    os.rename(out_file, new_file)
+        print(f"Audio downloaded as {mp3_file}")
+        
+        if type_sub == 'original_sub':
+            get_subtitles(mp3_file)
+        elif type_sub == 'english_sub':
+            translate_sub(mp3_file)
 
-    print(f"Audio downloaded as {new_file}")
-    if type_sub == 'original_sub':
-      get_subtitles(new_file)
-    elif type_sub == 'english_sub':
-      translate_sub(new_file)
-    return new_file.replace('.mp3','.srt')
-  except Exception as e:
-    print("Error:", e)
+        return mp3_file.replace('.mp3', '.srt')
+
+    except Exception as e:
+        print("Error:", e)
 
 def download_video(url, output_path):
-  try:
-    video = YouTube(url, on_progress_callback=on_progress)
-    video.streams.get_highest_resolution().download(output_path=output_path, filename=video.title+'.mp4')
-    #video.streams.get_by_resolution('480p').download(output_path=output_path)
-    print("Video downloaded")
-    return video.title
-  except Exception as e:
-    print("Error:", e)
+    try:
+        ydl_opts = {
+            'format': 'best',
+            'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+        }
 
+        with yt.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=False)
+            video_title = info_dict.get('title', 'video')
+            ydl.download([url])
+
+        mp4_file = os.path.join(output_path, f"{video_title}.mp4")
+
+        print(f"Video downloaded as {mp4_file}")
+        return mp4_file
+
+    except Exception as e:
+        print("Error:", e)
 
 if __name__ == "__main__":
+    url = input("Enter YouTube URL: ")
+    output_path = '.'  # Carpeta de salida, puedes cambiarla si lo deseas.
 
-  url = input("Enter YouTube URL: ")
-  #output_path = input("Enter output folder: ")
-  output_path = '.'
+    # Menú
+    download_type = input("Do you want to download audio (a) or video (v)? ")
 
-  # Menu
-  download_type = input("Do you want to download audio (a) or video (v)? ")
-
-  if download_type == "a":
-    download_audio(url, output_path)
-  
-  elif download_type == "v":
-    download_video(url, output_path)
-  
-  else:
-    print("Invalid input. Please enter a or v.")
+    if download_type == "a":
+        download_audio(url, output_path)
+    elif download_type == "v":
+        download_video(url, output_path)
+    else:
+        print("Invalid input. Please enter a or v.")
