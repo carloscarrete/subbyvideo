@@ -83,7 +83,7 @@ def send_url_download(message):
     global tg_video_yt
     global tg_video_option
     try:
-        if tg_video_option == '':
+        if tg_video_option == '' or tg_video_yt:
             tg_video_yt = message.text
             print(tg_video_yt)
             video_options_sub(message)
