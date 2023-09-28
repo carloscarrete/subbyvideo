@@ -102,9 +102,7 @@ def download_yt_video(message):
         try:
 
             url = tg_video_yt
-            title_video = download_video(url, '.')
-            print(title_video, 'printing title from video')
-            print(tg_video_yt, 'printing title from stage')
+            title_video = download_video(tg_video_yt, '.')
             bot.reply_to(message, "Su video será enviado en breve.")
 
             if tg_video_option == 'sub':
