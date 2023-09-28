@@ -85,7 +85,7 @@ def send_url_download(message):
     try:
         if tg_video_option == '' or tg_video_yt:
             tg_video_yt = message.text
-            print(tg_video_yt)
+            print(tg_video_yt, 'tg_video_yt from 1st stage')
             video_options_sub(message)
 
     except Exception as e:
@@ -103,7 +103,7 @@ def download_yt_video(message):
 
             url = tg_video_yt
             title_video = download_video(url, '.')
-            print(title_video)
+            print(title_video, 'printing title from video')
             bot.reply_to(message, "Su video será enviado en breve.")
 
             if tg_video_option == 'sub':
