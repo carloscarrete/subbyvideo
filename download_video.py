@@ -47,7 +47,7 @@ def download_video(url, output_path):
             video_title = info_dict.get('title', 'video')
             ydl.download([url])
 
-        mp4_file = os.path.join(output_path, f"{video_title}.mp4")
+        mp4_file = os.path.join(output_path, f"{video_title}")
 
         print(f"Video downloaded as {mp4_file}")
         return mp4_file
