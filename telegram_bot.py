@@ -104,8 +104,9 @@ def download_yt_video(message):
             url = tg_video_yt
             print('LA URL ', url)
             print('EL TG VIDEO ', tg_video_yt)
-            print('TYPE:', tg_video_option)
             title_video = download_video(tg_video_yt, '.')
+            print('TYPE:', tg_video_option, 'title video: ', title_video)
+            print('video full name', title_video, '.mp4')
             bot.reply_to(message, "Su video será enviado en breve.")
 
             if tg_video_option == 'sub':
@@ -148,7 +149,7 @@ def download_yt_video(message):
             tg_type_sub = ''
 
         except Exception as e:
-            bot.reply_to(message, f"Ocurrió un error: {str(e)}") 
+            bot.reply_to(message, f"Ocurrió un error al enviar su video: {str(e)}") 
             tg_video = False
             tg_video_option = ''
             tg_video_yt = ''
