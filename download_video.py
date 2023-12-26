@@ -49,8 +49,12 @@ def download_video(url, output_path):
 
         mp4_file = os.path.join(output_path, f"{video_title}")
 
+        mp4_file_withnospace = mp4_file.replace(" ", "")
+
+        print(mp4_file_withnospace)
+
         print(f"Video downloaded as {mp4_file}")
-        return mp4_file
+        return mp4_file_withnospace
 
     except Exception as e:
         print("Error:", e)
