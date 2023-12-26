@@ -104,6 +104,7 @@ def download_yt_video(message):
             url = tg_video_yt
             print('LA URL ', url)
             print('EL TG VIDEO ', tg_video_yt)
+            print('TYPE:', tg_video_option)
             title_video = download_video(tg_video_yt, '.')
             bot.reply_to(message, "Su video será enviado en breve.")
 
