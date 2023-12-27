@@ -39,17 +39,20 @@ def download_video(url, output_path):
     try:
         ydl_opts = {
             'format': 'best',
-            'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+            'outtmpl': os.path.join(output_path, '%(id)s.%(ext)s'),
         }
 
         with yt.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=False)
             video_title = info_dict.get('title', 'video')
+            video_id = info_dict.get('id', 'unknown_id')
             ydl.download([url])
 
         mp4_file = os.path.join(output_path, f"{video_title}")
 
         print(f"Video downloaded as {mp4_file}")
+        print('Id:', video_id)
+        print('mp4 file:', mp4_file)
         return mp4_file
 
     except Exception as e:
