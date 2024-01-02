@@ -106,7 +106,7 @@ def download_yt_video(message):
             videos = getArraryVideos(message.text)
             bot.reply_to(message, 'Su lista de videos ha comenzado a descargarse. Espere un momento por favor')
             nameFile = download_videos(videos)
-            shutil.move(title_video+'.mp4', "/var/www/html/videos/"+nameFile)
+            shutil.move(nameFile, "/var/www/html/videos/"+nameFile)
             bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(nameFile))
             tg_multiple_video = False
 
