@@ -1,8 +1,26 @@
 import os
 import subprocess
+import zipfile
 import yt_dlp as yt
+import re
+import random
+import string
+
 
 from ws_sub import get_subtitles, translate_sub
+
+videos_example = [
+    'https://www.youtube.com/watch?v=Qg3tTCEnfxw',
+    'https://www.youtube.com/watch?v=xFyEo2_MPvA',
+    'https://www.youtube.com/watch?v=UtfNsGJkKgU'
+]
+
+downloaded_videos = []
+
+def generateRandomId():
+    characters = string.ascii_letters + string.digits  
+    random_id = ''.join(random.choice(characters) for _ in range(10))
+    return random_id
 
 def download_audio(url, output_path, type_sub=''):
     try:
@@ -35,7 +53,7 @@ def download_audio(url, output_path, type_sub=''):
     except Exception as e:
         print("Error:", e)
 
-def download_video(url, output_path):
+def download_video(url, output_path='.'):
     try:
         ydl_opts = {
             'format': 'best',
@@ -59,6 +77,21 @@ def download_video(url, output_path):
     except Exception as e:
         print("Error:", e)
 
+def download_videos():
+    for url in videos_example:
+        video_file = download_video(url) + '.mp4'
+        downloaded_videos.append(video_file)
+    compress_videos(downloaded_videos)
+
+def compress_videos(video_list, output_path='.', archive_format='.zip'):
+    random_id = generateRandomId()
+    print(random_id)
+    archive_name = os.path.join(output_path, random_id + '_video' + archive_format)
+    with zipfile.ZipFile(archive_name, 'w') as zip_file:
+        for video_file in video_list:
+            zip_file.write(video_file)
+            os.remove(video_file)  # Delete video added in zip file
+
 if __name__ == "__main__":
     url = input("Enter YouTube URL: ")
     output_path = '.'  # Carpeta de salida, puedes cambiarla si lo deseas.
@@ -70,5 +103,7 @@ if __name__ == "__main__":
         download_audio(url, output_path)
     elif download_type == "v":
         download_video(url, output_path)
+    elif download_type == 'm':
+        download_videos()
     else:
         print("Invalid input. Please enter a or v.")
