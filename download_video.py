@@ -99,7 +99,7 @@ def compress_videos(video_list, output_path='.', archive_format='.zip'):
                 zip_file.write(video_file)
                 os.remove(video_file)  # Delete video added in zip file
         print('Compressed')
-        return random_id + '.zip'
+        return random_id  +'_video.zip'
     except Exception as e:
         print("Error:", e)
 
