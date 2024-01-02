@@ -77,20 +77,31 @@ def download_video(url, output_path='.'):
     except Exception as e:
         print("Error:", e)
 
-def download_videos():
-    for url in videos_example:
+def download_videos(videos):
+    downloaded_videos = []
+    for url in videos:
         video_file = download_video(url) + '.mp4'
         downloaded_videos.append(video_file)
-    compress_videos(downloaded_videos)
+    return compress_videos(downloaded_videos)
+
+
+def getArraryVideos(videos):
+    text = videos 
+    urls = re.findall(r'https://\S+', text)
+    return urls
 
 def compress_videos(video_list, output_path='.', archive_format='.zip'):
     random_id = generateRandomId()
-    print(random_id)
-    archive_name = os.path.join(output_path, random_id + '_video' + archive_format)
-    with zipfile.ZipFile(archive_name, 'w') as zip_file:
-        for video_file in video_list:
-            zip_file.write(video_file)
-            os.remove(video_file)  # Delete video added in zip file
+    try:
+        archive_name = os.path.join(output_path, random_id + '_video' + archive_format)
+        with zipfile.ZipFile(archive_name, 'w') as zip_file:
+            for video_file in video_list:
+                zip_file.write(video_file)
+                os.remove(video_file)  # Delete video added in zip file
+        print('Compressed')
+        return random_id + '.zip'
+    except Exception as e:
+        print("Error:", e)
 
 if __name__ == "__main__":
     url = input("Enter YouTube URL: ")

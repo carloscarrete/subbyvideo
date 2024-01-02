@@ -5,7 +5,7 @@ import urllib.parse
 
 import shutil
 
-from download_video import download_video, download_audio
+from download_video import download_video, download_audio, getArraryVideos, download_videos
 from subtitle_video import burn_subtitules, convert_video_to_audio
 from translate import translate_now
 from ws_sub import get_subtitles, translate_sub
@@ -21,6 +21,7 @@ tg_video = False
 tg_video_option = ''
 tg_video_yt = ''
 tg_type_sub = ''
+tg_multiple_video = False
 
 @bot.message_handler(content_types=['video'])
 def handle_video(message):
@@ -97,6 +98,21 @@ def download_yt_video(message):
     global tg_video_option 
     global tg_video_yt
     global tg_type_sub
+    global tg_multiple_video
+
+    print(tg_multiple_video)
+    try:
+        if tg_multiple_video:
+            videos = getArraryVideos(message.text)
+            bot.reply_to(message, 'Su lista de videos ha comenzado a descargarse. Espere un momento por favor')
+            nameFile = download_videos(videos)
+            shutil.move(title_video+'.mp4', "/var/www/html/videos/"+nameFile)
+            bot.reply_to(message, SERVER + '/videos/'+urllib.parse.quote(nameFile))
+            tg_multiple_video = False
+
+    except Exception as e:
+        bot.reply_to(message, f"Ocurrió un error al intentar descargar su lista de videos: {str(e)}") 
+        tg_multiple_video = False
 
     if tg_video_option=='sub' or tg_video_option=='original':
         try:
@@ -174,7 +190,8 @@ def handle_menu(message):
     menu_markup = telebot.types.InlineKeyboardMarkup(row_width=2)
     button1 = telebot.types.InlineKeyboardButton(text='Descargar YouTube', callback_data='option1')
     button2 = telebot.types.InlineKeyboardButton(text='Subtitular Video', callback_data='option2')
-    menu_markup.add(button1, button2)
+    button3 = telebot.types.InlineKeyboardButton(text='Descargar múltiples videos', callback_data='option3')
+    menu_markup.add(button1, button2, button3)
     bot.send_message(message.chat.id, '¿Qué desea hacer?', reply_markup=menu_markup)
 
 def video_options_sub(message):
@@ -198,6 +215,7 @@ def handle_callback_query(call):
     global tg_video_yt
     global tg_video_option
     global tg_type_sub
+    global tg_multiple_video
     if call.data == 'option1':
         bot.send_message(call.message.chat.id, 'Por favor, envia el link del video de YouTube')
         tg_video_yt = True
@@ -206,6 +224,10 @@ def handle_callback_query(call):
         bot.send_message(call.message.chat.id, 'De acuerdo. Ahora, ¿En que idioma quiere sus subtítulos?')
         tg_video = True
         sub_options(call.message)
+    elif call.data == 'option3':
+        tg_multiple_video = True
+        bot.send_message(call.message.chat.id, 'Por favor, envia el link de los múltiples videos a descargar')
+        bot.register_next_step_handler(call.message, download_yt_video)
     elif call.data ==  'original':
         tg_video_option="original"
         print('original')
